@@ -1,13 +1,13 @@
-[]  Dendrochronology Program Library                                        Run OAK1   Program COF  15:45  Thu 27 Jul 2017  Page   1
+[]  Dendrochronology Program Library                                        Run OAKS1  Program COF  13:39  Tue 01 Aug 2017  Page   1
 []
-[]  P R O G R A M      C O F E C H A                                                                          Version 6.06P    30160
+[]  P R O G R A M      C O F E C H A                                                                          Version 6.06P    30165
 ------------------------------------------------------------------------------------------------------------------------------------
 
  QUALITY CONTROL AND DATING CHECK OF TREE-RING MEASUREMENTS
 
- Title of run:           oak1                                    
+ Title of run:           oaks1                                   
 
- File of DATED series:   oaks_master_trw.rwl
+ File of DATED series:   oaks1_master_trw.rwl
 
  CONTENTS:
 
@@ -52,7 +52,7 @@
  ABSENT RINGS listed by SERIES:            (See Master Dating Series for absent rings listed by year)
 
                No ring measurements of zero value
-PART 2:  TIME PLOT OF TREE-RING SERIES: oak1                                                       15:45  Thu 27 Jul 2017  Page   2
+PART 2:  TIME PLOT OF TREE-RING SERIES: oaks1                                                      13:39  Tue 01 Aug 2017  Page   2
 ------------------------------------------------------------------------------------------------------------------------------------
  1050 1100 1150 1200 1250 1300 1350 1400 1450 1500 1550 1600 1650 1700 1750 1800 1850 1900 1950 2000 2050 Ident   Seq Time-span  Yrs
    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    : -------- --- ---- ---- ----
@@ -105,7 +105,7 @@
    .    .    .    .    .    .    .    .    .    .    .    .    .    .    .    .    <===============>   . QU1498N1  47 1851 2017  167
    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :
  1050 1100 1150 1200 1250 1300 1350 1400 1450 1500 1550 1600 1650 1700 1750 1800 1850 1900 1950 2000 2050
-PART 3:  Master Dating Series: oak1                                                                15:45  Thu 27 Jul 2017  Page   3
+PART 3:  Master Dating Series: oaks1                                                               13:39  Tue 01 Aug 2017  Page   3
 ------------------------------------------------------------------------------------------------------------------------------------
   Year  Value  No Ab    Year  Value  No Ab    Year  Value  No Ab    Year  Value  No Ab    Year  Value  No Ab    Year  Value  No Ab
   ------------------    ------------------    ------------------    ------------------    ------------------    ------------------
@@ -164,7 +164,7 @@
   1848  -.423   8       1898  -.011  33       1948 -1.592  43       1998   .996  47
   1849   .075  10       1899   .166  33       1949 -1.239  43       1999   .842  47
 ------------------------------------------------------------------------------------------------------------------------------------
-PART 4:  Master Bar Plot: oak1                                                                     15:45  Thu 27 Jul 2017  Page   4
+PART 4:  Master Bar Plot: oaks1                                                                    13:39  Tue 01 Aug 2017  Page   4
 ------------------------------------------------------------------------------------------------------------------------------------
    Year Rel value  Year Rel value  Year Rel value  Year Rel value  Year Rel value  Year Rel value  Year Rel value  Year Rel value
                    1850---a        1900----a       1950-----@      2000-------C
@@ -217,7 +217,7 @@
    1847--c         1897------A     1947-----A      1997----@
    1848---b        1898----@       1948-f          1998---------D
    1849-----@      1899-----A      1949-e          1999--------C
-PART 5:  CORRELATION OF SERIES BY SEGMENTS: oak1                                                   15:45  Thu 27 Jul 2017  Page   5
+PART 5:  CORRELATION OF SERIES BY SEGMENTS: oaks1                                                  13:39  Tue 01 Aug 2017  Page   5
 ------------------------------------------------------------------------------------------------------------------------------------
  Correlations of  50-year dated segments, lagged  25 years
  Flags:  A = correlation under   .3281 but highest as dated;  B = correlation higher at other than dated position
@@ -273,7 +273,7 @@
   46 QU1498E1 1860 2017        .66  .74  .79  .69  .57  .60
   47 QU1498N1 1851 2017        .33B .55  .69  .65  .58  .59
  Av segment correlation   .53  .58  .64  .63  .58  .59  .60
-PART 6:  POTENTIAL PROBLEMS: oak1                                                                  15:45  Thu 27 Jul 2017  Page   5
+PART 6:  POTENTIAL PROBLEMS: oaks1                                                                 13:39  Tue 01 Aug 2017  Page   5
 ------------------------------------------------------------------------------------------------------------------------------------
 
  For each series with potential problems the following diagnostics may appear:
@@ -775,7 +775,7 @@
        Lower   1862< -.104   1851< -.067   1871> -.025   1895> -.019   1889< -.017   1860< -.017  Higher   1863  .190   1893  .039
 
 ====================================================================================================================================
-PART 7:  DESCRIPTIVE STATISTICS: oak1                                                              15:45  Thu 27 Jul 2017  Page   6
+PART 7:  DESCRIPTIVE STATISTICS: oaks1                                                             13:39  Tue 01 Aug 2017  Page   6
 ------------------------------------------------------------------------------------------------------------------------------------
 
                                                 Corr   //-------- Unfiltered --------\\  //---- Filtered -----\\
@@ -832,4 +832,4 @@
  --- -------- ---------  -----  -----  -----   ------ -----  -----  -----  -----  -----  -----  -----  -----  --
  Total or mean:           6451    244     24    .586   1.63   9.48   .671   .682   .225   3.09   .436   .004
 
-                                              - = [  COFECHA OAK1 COF  ] = -
+                                              - = [  COFECHA OAKS1COF  ] = -

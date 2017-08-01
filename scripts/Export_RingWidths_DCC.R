@@ -29,8 +29,9 @@ tree.species <- rbind(permtree.data[,c(3,6)], temptree.data[,c(3,4)])
 tree.species$Species <- as.factor(substr(tree.species$Species, 1, 2))
 
 # Setting a path to the raw ring width folder
+# CHECK NAME
 
-tr.path <- "~/Google Drive/Morton Summer 2017/East Woods/Rollinson_Monitoring/Data/Tree Cores/RawRingWidths/"
+tr.path <- "~/Google Drive/Morton Summer 2017/East Woods/Rollinson_Monitoring/Data/Tree Cores/RawRingWidths"
 
 # Splitting the file name into lists
 
@@ -45,7 +46,7 @@ trw.names.split <- strsplit(trw.names, "-")
 # Initializing the master list with the first ring width set
 
 # Reading in the first file
-files.all <- read.rwl(file.path(tr.path, rw.names[1])) 
+files.all <- read.rwl(file.path(tr.path, trw.names[1])) 
 
 # Storing the parts of the name
 aa <- trw.names.split[[1]]  
@@ -68,7 +69,8 @@ for(i in 2:length(trw.names)){
   files.all <- combine.rwl(files.all, file.tmp)
 }
 
+# Exporting tree ring widths as one combined file
 # CHECK NAME
 
-write.rwl(files.all, "oaks_master_trw.rwl", long.names=TRUE)
+write.rwl(files.all, "oaks5_master_trw.rwl", long.names=TRUE)
 

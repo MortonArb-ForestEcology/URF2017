@@ -1,13 +1,13 @@
-[]  Dendrochronology Program Library                                        Run OAK2   Program COF  18:37  Thu 27 Jul 2017  Page   1
+[]  Dendrochronology Program Library                                        Run OAKS2  Program COF  13:40  Tue 01 Aug 2017  Page   1
 []
-[]  P R O G R A M      C O F E C H A                                                                          Version 6.06P    30160
+[]  P R O G R A M      C O F E C H A                                                                          Version 6.06P    30165
 ------------------------------------------------------------------------------------------------------------------------------------
 
  QUALITY CONTROL AND DATING CHECK OF TREE-RING MEASUREMENTS
 
- Title of run:           oak2                                    
+ Title of run:           oaks2                                   
 
- File of DATED series:   oaks_happy_trw.rwl
+ File of DATED series:   oaks2_trw.rwl
 
  CONTENTS:
 
@@ -52,7 +52,7 @@
  ABSENT RINGS listed by SERIES:            (See Master Dating Series for absent rings listed by year)
 
                No ring measurements of zero value
-PART 2:  TIME PLOT OF TREE-RING SERIES: oak2                                                       18:37  Thu 27 Jul 2017  Page   2
+PART 2:  TIME PLOT OF TREE-RING SERIES: oaks2                                                      13:40  Tue 01 Aug 2017  Page   2
 ------------------------------------------------------------------------------------------------------------------------------------
  1050 1100 1150 1200 1250 1300 1350 1400 1450 1500 1550 1600 1650 1700 1750 1800 1850 1900 1950 2000 2050 Ident   Seq Time-span  Yrs
    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    : -------- --- ---- ---- ----
@@ -90,7 +90,7 @@
    .    .    .    .    .    .    .    .    .    .    .    .    .    .    .    .    .<==============>   . QU1498E1  32 1860 2017  158
    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :    :
  1050 1100 1150 1200 1250 1300 1350 1400 1450 1500 1550 1600 1650 1700 1750 1800 1850 1900 1950 2000 2050
-PART 3:  Master Dating Series: oak2                                                                18:37  Thu 27 Jul 2017  Page   3
+PART 3:  Master Dating Series: oaks2                                                               13:40  Tue 01 Aug 2017  Page   3
 ------------------------------------------------------------------------------------------------------------------------------------
   Year  Value  No Ab    Year  Value  No Ab    Year  Value  No Ab    Year  Value  No Ab    Year  Value  No Ab    Year  Value  No Ab
   ------------------    ------------------    ------------------    ------------------    ------------------    ------------------
@@ -149,7 +149,7 @@
   1848  -.319   6       1898  -.027  22       1948 -1.362  31       1998   .874  32
   1849  -.075   8       1899  -.027  22       1949 -1.042  31       1999   .727  32
 ------------------------------------------------------------------------------------------------------------------------------------
-PART 4:  Master Bar Plot: oak2                                                                     18:37  Thu 27 Jul 2017  Page   4
+PART 4:  Master Bar Plot: oaks2                                                                    13:40  Tue 01 Aug 2017  Page   4
 ------------------------------------------------------------------------------------------------------------------------------------
    Year Rel value  Year Rel value  Year Rel value  Year Rel value  Year Rel value  Year Rel value  Year Rel value  Year Rel value
                    1850---b        1900----a       1950-----A      2000-------B
@@ -202,7 +202,7 @@
    1847---b        1897-----@      1947-----A      1997----@
    1848---a        1898----@       1948-e          1998--------C
    1849----@       1899----@       1949-d          1999--------C
-PART 5:  CORRELATION OF SERIES BY SEGMENTS: oak2                                                   18:37  Thu 27 Jul 2017  Page   5
+PART 5:  CORRELATION OF SERIES BY SEGMENTS: oaks2                                                  13:40  Tue 01 Aug 2017  Page   5
 ------------------------------------------------------------------------------------------------------------------------------------
  Correlations of  50-year dated segments, lagged  25 years
  Flags:  A = correlation under   .3281 but highest as dated;  B = correlation higher at other than dated position
@@ -243,7 +243,7 @@
   31 QU035B1  1870 2017        .78  .80  .75  .69  .74  .75
   32 QU1498E1 1860 2017        .61  .71  .78  .70  .52  .55
  Av segment correlation   .60  .68  .74  .72  .64  .64  .69
-PART 6:  POTENTIAL PROBLEMS: oak2                                                                  18:37  Thu 27 Jul 2017  Page   5
+PART 6:  POTENTIAL PROBLEMS: oaks2                                                                 13:40  Tue 01 Aug 2017  Page   5
 ------------------------------------------------------------------------------------------------------------------------------------
 
  For each series with potential problems the following diagnostics may appear:
@@ -518,7 +518,7 @@
 ====================================================================================================================================
 
  [*] All segments correlate highest as dated with correlation with master series over   .3281
-PART 7:  DESCRIPTIVE STATISTICS: oak2                                                              18:37  Thu 27 Jul 2017  Page   6
+PART 7:  DESCRIPTIVE STATISTICS: oaks2                                                             13:40  Tue 01 Aug 2017  Page   6
 ------------------------------------------------------------------------------------------------------------------------------------
 
                                                 Corr   //-------- Unfiltered --------\\  //---- Filtered -----\\
@@ -560,4 +560,4 @@
  --- -------- ---------  -----  -----  -----   ------ -----  -----  -----  -----  -----  -----  -----  -----  --
  Total or mean:           4405    167      0    .668   1.73   9.48   .682   .658   .226   3.09   .448   .009
 
-                                              - = [  COFECHA OAK2 COF  ] = -
+                                              - = [  COFECHA OAKS2COF  ] = -
