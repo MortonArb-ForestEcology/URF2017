@@ -5,6 +5,20 @@
 # --------------------------------------
 # --------------------------------------
 
+# --------------------------------------
+# CHECK BEFORE RUNNING!
+# --------------------------------------
+
+# export info
+
+file.name <- "master_trw.rwl"
+
+# path info
+
+tr.path <- "~/Google Drive/Morton Summer 2017/East Woods/Rollinson_Monitoring/Data/Tree Cores/RawRingWidths"
+
+# --------------------------------------
+
 library(dplR)
 
 # Setting a working directory
@@ -12,9 +26,8 @@ library(dplR)
 setwd("~/Github/URF2017/")
 
 # Pulling all raw tree ring files into one object
-# CHANGE HERE IF USING ANOTHER FOLDER
 
-rawringfiles <- Sys.glob('~/Google Drive/Morton Summer 2017/East Woods/Rollinson_Monitoring/Data/Tree Cores/RawRingWidths/*.rwl')
+rawringfiles <- Sys.glob(file.path(tr.path, "*.rwl"))
 
 # Grabbing all the species data
 
@@ -28,12 +41,7 @@ temptree.data[,3] <- as.character(temptree.data[,3])
 tree.species <- rbind(permtree.data[,c(3,6)], temptree.data[,c(3,4)])                     
 tree.species$Species <- as.factor(substr(tree.species$Species, 1, 2))
 
-# Setting a path to the raw ring width folder
-# CHECK NAME
-
-tr.path <- "~/Google Drive/Morton Summer 2017/East Woods/Rollinson_Monitoring/Data/Tree Cores/RawRingWidths"
-
-# Splitting the file name into lists
+# Splitting the file names into lists
 
 rw.names <- dir(tr.path)
 trw.names <- rw.names[grep('ring width', rw.names)]
@@ -70,7 +78,6 @@ for(i in 2:length(trw.names)){
 }
 
 # Exporting tree ring widths as one combined file
-# CHECK NAME
 
-write.rwl(files.all, "oaks5_master_trw.rwl", long.names=TRUE)
+write.rwl(files.all, file.name, long.names=TRUE)
 
