@@ -9,40 +9,43 @@
 # CHECK BEFORE RUNNING!
 # --------------------------------------
 
-# export info
-
+# Export info
 file.name <- "master_trw.rwl"
 
-# path info
+# Path to tree ring files
+tr.path <- "~/Google Drive/Morton Summer 2017/East Woods/Rollinson_Monitoring/Data/Tree Cores/RawRingWidths" #Sierra
+# tr.path <- "~/Google Drive/East Woods/Rollinson_Monitoring/Data/Tree Cores/RawRingWidths" #Christy
 
-# tr.path <- "~/Google Drive/Morton Summer 2017/East Woods/Rollinson_Monitoring/Data/Tree Cores/RawRingWidths"
-tr.path <- "~/Google Drive/East Woods/Rollinson_Monitoring/Data/Tree Cores/RawRingWidths"
+# Working directory path
+path.wd <- "~/Github/URF2017/" #Sierra
+#path.wd <- "~/Desktop/Research/URF2017_Lopazelles/" #Christy
+
+# Path to Tree Census 2017 data
+path.ew <- "~/Github/EastWoods-MonitoringPlots/TreeCensus_2017/data/" # Sierra
+# path.ew <- "~/Desktop/Research/EastWoods-MonitoringPlots/TreeCensus_2017/data/" # Christy
+
+
 # --------------------------------------
 
 library(dplR)
 
 # Setting a working directory
-
-# setwd("~/Github/URF2017/")
-setwd("~/Desktop/Research/URF2017_Lopazelles/")
+setwd(path.wd)
 
 # Pulling all raw tree ring files into one object
-
 rawringfiles <- Sys.glob(file.path(tr.path, "*.rwl"))
 
 # Grabbing all the species data
-# path.ew <- "~/Github/EastWoods-MonitoringPlots/TreeCensus_2017/data/" # Sierra
-path.ew <- "~/Desktop/Research/EastWoods-MonitoringPlots/TreeCensus_2017/data/" # Christy
 
 permtree.data <-read.csv(file = file.path(path.ew, "TreeData-raw_data.csv"), na.strings = "", colClasses=c("Tag"="character"))
 temptree.data <-read.csv(file.path(path.ew, "URF_2017_AdditionalOakData-raw_data.csv"), na.strings="", colClasses=c("Tag"="character"))
 
 names(permtree.data)[6] <- "Species"
-permtree.data[,3] <- as.character(permtree.data[,3])
-temptree.data[,3] <- as.character(temptree.data[,3])
+permtree.data[,"Species"] <- as.character(permtree.data[,"Species"])
+temptree.data[,"Species"] <- as.character(temptree.data[,"Species"])
 
-tree.species <- rbind(permtree.data[,c(3,6)], temptree.data[,c(3,4)])                     
-tree.species$Genus <- as.factor(substr(tree.species$Species, 1, 2)) # Don't overwrite the actual species code; that's important info to keep along
+tree.species <- rbind(permtree.data[,c("Tag","Species")], temptree.data[,c("Tag","Species")])                     
+tree.species$Genus <- as.factor(substr(tree.species$Species, 1, 2)) 
 
 # Splitting the file names into lists
 
@@ -81,6 +84,4 @@ for(i in 2:length(trw.names)){
 }
 
 # Exporting tree ring widths as one combined file
-
 write.rwl(files.all, file.path("data",file.name), long.names=TRUE)
-
