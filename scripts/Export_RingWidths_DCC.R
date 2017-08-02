@@ -15,31 +15,34 @@ file.name <- "master_trw.rwl"
 
 # path info
 
-tr.path <- "~/Google Drive/Morton Summer 2017/East Woods/Rollinson_Monitoring/Data/Tree Cores/RawRingWidths"
-
+# tr.path <- "~/Google Drive/Morton Summer 2017/East Woods/Rollinson_Monitoring/Data/Tree Cores/RawRingWidths"
+tr.path <- "~/Google Drive/East Woods/Rollinson_Monitoring/Data/Tree Cores/RawRingWidths"
 # --------------------------------------
 
 library(dplR)
 
 # Setting a working directory
 
-setwd("~/Github/URF2017/")
+# setwd("~/Github/URF2017/")
+setwd("~/Desktop/Research/URF2017_Lopazelles/")
 
 # Pulling all raw tree ring files into one object
 
 rawringfiles <- Sys.glob(file.path(tr.path, "*.rwl"))
 
 # Grabbing all the species data
+# path.ew <- "~/Github/EastWoods-MonitoringPlots/TreeCensus_2017/data/" # Sierra
+path.ew <- "~/Desktop/Research/EastWoods-MonitoringPlots/TreeCensus_2017/data/" # Christy
 
-permtree.data <-read.csv(file = "~/Github/EastWoods-MonitoringPlots/TreeCensus_2017/data/TreeData-raw_data.csv", na.strings = "", colClasses=c("Tag"="character"))
-temptree.data <-read.csv("~/Github/EastWoods-MonitoringPlots/TreeCensus_2017/data/URF_2017_AdditionalOakData-raw_data.csv", na.strings="", colClasses=c("Tag"="character"))
+permtree.data <-read.csv(file = file.path(path.ew, "TreeData-raw_data.csv"), na.strings = "", colClasses=c("Tag"="character"))
+temptree.data <-read.csv(file.path(path.ew, "URF_2017_AdditionalOakData-raw_data.csv"), na.strings="", colClasses=c("Tag"="character"))
 
 names(permtree.data)[6] <- "Species"
 permtree.data[,3] <- as.character(permtree.data[,3])
 temptree.data[,3] <- as.character(temptree.data[,3])
 
 tree.species <- rbind(permtree.data[,c(3,6)], temptree.data[,c(3,4)])                     
-tree.species$Species <- as.factor(substr(tree.species$Species, 1, 2))
+tree.species$Genus <- as.factor(substr(tree.species$Species, 1, 2)) # Don't overwrite the actual species code; that's important info to keep along
 
 # Splitting the file names into lists
 
@@ -60,7 +63,7 @@ files.all <- read.rwl(file.path(tr.path, trw.names[1]))
 aa <- trw.names.split[[1]]  
 
 # Combining the parts of the name with species in the proper order
-nam <- paste0(as.character(tree.species[tree.species$Tag==aa[3],2]), paste(aa[c(3, 4, 6)], collapse=""))
+nam <- paste0(as.character(tree.species[tree.species$Tag==aa[3],"Genus"]), paste(aa[c(3, 4, 6)], collapse=""))
 
 # Assigning the name to the file
 names(files.all) <- nam
@@ -70,7 +73,7 @@ names(files.all) <- nam
 for(i in 2:length(trw.names)){
   file.tmp <- read.rwl(file.path(tr.path, trw.names[i]))
   aa <- trw.names.split[[i]]
-  nam <- paste0(as.character(tree.species[tree.species$Tag==aa[3],2]), paste(aa[c(3, 4, 6)], collapse=""))
+  nam <- paste0(as.character(tree.species[tree.species$Tag==aa[3],"Genus"]), paste(aa[c(3, 4, 6)], collapse=""))
   names(file.tmp) <- nam
   
   # Appending each file to the master list
@@ -79,5 +82,5 @@ for(i in 2:length(trw.names)){
 
 # Exporting tree ring widths as one combined file
 
-write.rwl(files.all, file.name, long.names=TRUE)
+write.rwl(files.all, file.path("data",file.name), long.names=TRUE)
 
