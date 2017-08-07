@@ -10,16 +10,16 @@
 # --------------------------------------
 
 # Working directory path
-path.wd <- "~/Github/URF2017/" # Sierra
-# path.wd <- "~/Desktop/Research/URF2017_Lopazelles/" # Christy
+# path.wd <- "~/Github/URF2017/" # Sierra
+path.wd <- "~/Desktop/Research/URF2017_Lopazalles/" # Christy
 
 # Path to Tree Cencus 2017 folder
-path.ew <- "~/Github/EastWoods-MonitoringPlots/TreeCensus_2017/data/" # Sierra
-# path.ew <- "~/Desktop/Research/EastWoods-MonitoringPlots/TreeCensus_2017/data/" # Christy
+# path.ew <- "~/Github/EastWoods-MonitoringPlots/TreeCensus_2017/data/" # Sierra
+path.ew <- "~/Desktop/Research/EastWoods-MonitoringPlots/TreeCensus_2017/data/" # Christy
 
 # Path to East Woods Google Drive folder
-path.google <- "C:/Users/macmo/Google Drive/Morton Summer 2017/East Woods/" # Sierra
-# path.google <- "~/Google Drive/East Woods" # Christy
+# path.google <- "C:/Users/macmo/Google Drive/Morton Summer 2017/East Woods/" # Sierra
+path.google <- "~/Google Drive/East Woods" # Christy
 
 # --------------------------------------
 
@@ -142,7 +142,7 @@ rownames(bai.tmp) <- NULL
 names(bai.tmp) <- "BAI"
 
 rw.long$BAI <- bai.tmp
-
+row.names(rw.long) <- 1:nrow(rw.long)
 
 # Repeating for all other files 
 
@@ -152,20 +152,25 @@ for(i in 2:length(trw.names)){
   data.tmp <- data.frame(aa[3])
   data.tmp$DBH <- survey[survey$Tag==aa[3],"DBH"] * 10 # Converting DBH to mm
   names(file.tmp) <- aa[3]
+  names(data.tmp)[1] <- aa[3]
   bai.tmp <- bai.out(file.tmp, data.tmp) # Converting to basal area increment
+  row.names(bai.tmp) <- (nrow(rw.long)+1):(nrow(rw.long)+nrow(bai.tmp))
+  
   file.tmp <- data.frame(file.tmp)
   names(file.tmp) <- "RingWidth"
   file.tmp$Tag <- aa[3]
   file.tmp$Core <- paste(aa[c(3, 4, 6)], collapse="-")
   file.tmp$Year <- as.numeric(rownames(file.tmp))
   
-  rownames(bai.tmp) <- NULL
+  # rownames(bai.tmp) <- NULL
   
   file.tmp$BAI <- bai.tmp
   
-  rownames(file.tmp) <- NULL
-  rownames(rw.long) <- NULL
-  
+  # rownames(rw.long) <- NULL
+  row.names(file.tmp) <- (nrow(rw.long)+1):(nrow(rw.long)+nrow(file.tmp))
+  file.tmp <- data.frame(file.tmp)
+  # row.names(file.tmp) <- make.names(file.tmp[,1], unique=T)
+
   rw.long <- rbind(rw.long, file.tmp) 
 }
 
