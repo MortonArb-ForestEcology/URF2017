@@ -10,16 +10,16 @@
 # --------------------------------------
 
 # Working directory path
-# path.wd <- "~/Github/URF2017/" # Sierra
-path.wd <- "~/Desktop/Research/URF2017_Lopazalles/" # Christy
+path.wd <- "~/Github/URF2017/" # Sierra
+# path.wd <- "~/Desktop/Research/URF2017_Lopazalles/" # Christy
 
 # Path to Tree Cencus 2017 folder
-# path.ew <- "~/Github/EastWoods-MonitoringPlots/TreeCensus_2017/data/" # Sierra
-path.ew <- "~/Desktop/Research/EastWoods-MonitoringPlots/TreeCensus_2017/data/" # Christy
+path.ew <- "~/Github/EastWoods-MonitoringPlots/TreeCensus_2017/data/" # Sierra
+# path.ew <- "~/Desktop/Research/EastWoods-MonitoringPlots/TreeCensus_2017/data/" # Christy
 
 # Path to East Woods Google Drive folder
-# path.google <- "C:/Users/macmo/Google Drive/Morton Summer 2017/East Woods/" # Sierra
-path.google <- "~/Google Drive/East Woods" # Christy
+path.google <- "C:/Users/macmo/Google Drive/Morton Summer 2017/East Woods/" # Sierra
+# path.google <- "~/Google Drive/East Woods" # Christy
 
 # --------------------------------------
 
@@ -60,6 +60,9 @@ names(survey1)[6] <- "Species"
 survey1$Plot <- recode(survey1$Plot, " 'A1'='N115'; 'B5'='U134'; 'C6'='HH115'; 'D1'='B127' ")
 survey1[,"Tag"] <- as.character(survey1[,"Tag"])
 survey2[,"Tag"] <- as.character(survey2[,"Tag"])
+
+# Fixing the weird Tilia
+survey1$Species <- as.factor(substr(survey1$Species, 1, 4))
 
 # Combining survey information from both the permanent and temporary plots
 survey <- rbind(survey1[,c("Plot","Tag","Species", "DBH")], survey2[,c("Plot","Tag","Species", "DBH")])                     
@@ -137,12 +140,8 @@ names(rw.long) <- "RingWidth"
 rw.long$Tag <- aa[3]
 rw.long$Core <- paste(aa[c(3, 4, 6)], collapse="-")
 rw.long$Year <- as.numeric(rownames(rw.long))
-
-rownames(bai.tmp) <- NULL
 names(bai.tmp) <- "BAI"
-
-rw.long$BAI <- bai.tmp
-row.names(rw.long) <- 1:nrow(rw.long)
+rw.long$BAI <- bai.tmp$BAI
 
 # Repeating for all other files 
 
@@ -154,23 +153,13 @@ for(i in 2:length(trw.names)){
   names(file.tmp) <- aa[3]
   names(data.tmp)[1] <- aa[3]
   bai.tmp <- bai.out(file.tmp, data.tmp) # Converting to basal area increment
-  row.names(bai.tmp) <- (nrow(rw.long)+1):(nrow(rw.long)+nrow(bai.tmp))
-  
+  names(bai.tmp) <- "BAI"
   file.tmp <- data.frame(file.tmp)
   names(file.tmp) <- "RingWidth"
   file.tmp$Tag <- aa[3]
   file.tmp$Core <- paste(aa[c(3, 4, 6)], collapse="-")
   file.tmp$Year <- as.numeric(rownames(file.tmp))
-  
-  # rownames(bai.tmp) <- NULL
-  
-  file.tmp$BAI <- bai.tmp
-  
-  # rownames(rw.long) <- NULL
-  row.names(file.tmp) <- (nrow(rw.long)+1):(nrow(rw.long)+nrow(file.tmp))
-  file.tmp <- data.frame(file.tmp)
-  # row.names(file.tmp) <- make.names(file.tmp[,1], unique=T)
-
+  file.tmp$BAI <- bai.tmp$BAI
   rw.long <- rbind(rw.long, file.tmp) 
 }
 
@@ -199,4 +188,5 @@ data.all <- data.most
 # Still need pith year, age, treatment (need fire data)
 
 
-# write.csv(data.all, file.path("data","CombinedData"))
+write.csv(data.all, file.path("data","CombinedData"))
+

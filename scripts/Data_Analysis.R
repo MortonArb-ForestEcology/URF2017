@@ -38,7 +38,7 @@ trw.data <- read.csv(file.path(path.wd,"data/CombinedData"))
 # --------------------------------------
 
 # Removing weird first column
-trw.data <- trw.data[,2:11]
+trw.data <- trw.data[,2:12]
 
 # Setting all NA fire counts to zero
 trw.data[is.na(trw.data$FireCount),"FireCount"] <- 0
@@ -67,6 +67,9 @@ summary(lm.test3)
 lm.test4 <- lm(RingWidth ~ Precip+Temp+FireCount+Year, data=trw.data)
 summary(lm.test4)
 
+lm.test5 <- lm(RingWidth ~ Precip+Temp+FireCount+Year+Species, data=trw.data)
+summary(lm.test5)
+
 # Should improve with BAI rather then ring widths
 
 hist(trw.data$RingWidth); abline(v=median(trw.data$RingWidth), lty="dashed", col="red", lwd=5)
@@ -75,3 +78,29 @@ plot(resid(lm.test4) ~ predict(lm.test4)); abline(h=0, lty="dashed", col="red", 
 plot(predict(lm.test4) ~ trw.data$RingWidth[1:846]); abline(a=0, b=1, col="red", lty="dashed", lwd=2)
 
 hist(log(trw.data$RingWidth)); abline(v=median(log(trw.data$RingWidth)), lty="dashed", col="red", lwd=5)
+
+# -----------------------------
+
+ggplot(trw.data) +
+  geom_point(aes(x=FireCount, y=BAI)) +
+  geom_smooth(aes(x=FireCount, y=BAI), method="lm")
+
+lm.test6 <- lm(BAI ~ FireCount, data=trw.data)
+summary(lm.test6)
+
+lm.test7 <- lm(BAI ~ FireCount+Year, data=trw.data)
+summary(lm.test7)
+
+lm.test8 <- lm(BAI ~ Precip+Temp+FireCount, data=trw.data)
+summary(lm.test8)
+
+lm.test9 <- lm(BAI ~ Precip+Temp+FireCount+Year, data=trw.data)
+summary(lm.test9)
+
+lm.test10 <- lm(BAI ~ Precip+Temp+FireCount+Year+Species, data=trw.data)
+summary(lm.test10)
+
+hist(trw.data$BAI); abline(v=median(trw.data$BAI), lty="dashed", col="red", lwd=5)
+hist(resid(lm.test10)); abline(v=0, lty="dashed", col="red", lwd=5)
+plot(resid(lm.test10) ~ predict(lm.test10)); abline(h=0, lty="dashed", col="red", lwd=2)
+plot(predict(lm.test10) ~ trw.data$BAI); abline(a=0, b=1, col="red", lty="dashed", lwd=2)
