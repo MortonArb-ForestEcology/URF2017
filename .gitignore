@@ -1,2 +1,4 @@
 crossdating/
 *.rwl
+
+.Rhistory
