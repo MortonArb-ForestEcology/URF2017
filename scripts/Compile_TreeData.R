@@ -95,15 +95,22 @@ climate.summer <- aggregate(climate.month[substr(climate.month$Date,6,8) %in% mo
 names(climate.year)[1] <- "Year"
 names(climate.summer)[1] <- "Year"
 
-# In the meantime while waiting on more info
-# Need to fix the 2013's
+# Fixing fire data
 
-fire.data <- fire.data[!is.na(fire.data[,"Burn_Date"]),]
-
+# Removing month and day from date
 fire.data$Burn_Date <- substr(fire.data$Burn_Date, 1, 4)
 
+# Resaving as numeric
+fire.data$Burn_Date <- as.numeric(as.character(fire.data$Burn_Date))
+
+# Fixing the 2013's
+fire.data[fire.data$NOTES == "2013 unsure on date" & !is.na(fire.data$NOTES),"Burn_Date"] <- 2013
+
+# Removing all rows without a burn date
+fire.data <- fire.data[!is.na(fire.data[,"Burn_Date"]),]
+
 # Counting burns per plot
-# Will make burns per decade when they actually span more than one decade
+# Could make burns per decade when they actually span more than one decade
 
 fire.count <- aggregate(fire.data$Burn_Date,
                              list(fire.data$Corner),
@@ -146,13 +153,23 @@ rw.long$BAI <- bai.tmp$BAI
 # Repeating for all other files 
 
 for(i in 2:length(trw.names)){
+  
+  # Extracting ring width data
   file.tmp <- read.rwl(file.path(tr.path, trw.names[i]))
+  
+  # Storing tag number
   aa <- trw.names.split[[i]]
+  
+  # Creating a data frame to allow for bai.out
   data.tmp <- data.frame(aa[3])
   data.tmp$DBH <- survey[survey$Tag==aa[3],"DBH"] * 10 # Converting DBH to mm
   names(file.tmp) <- aa[3]
   names(data.tmp)[1] <- aa[3]
-  bai.tmp <- bai.out(file.tmp, data.tmp) # Converting to basal area increment
+  
+  # Converting to basal area increment
+  bai.tmp <- bai.out(file.tmp, data.tmp) 
+  
+  # Renaming columns and adding BAI
   names(bai.tmp) <- "BAI"
   file.tmp <- data.frame(file.tmp)
   names(file.tmp) <- "RingWidth"
@@ -160,6 +177,8 @@ for(i in 2:length(trw.names)){
   file.tmp$Core <- paste(aa[c(3, 4, 6)], collapse="-")
   file.tmp$Year <- as.numeric(rownames(file.tmp))
   file.tmp$BAI <- bai.tmp$BAI
+
+  # Appending to full file
   rw.long <- rbind(rw.long, file.tmp) 
 }
 
@@ -174,8 +193,7 @@ data.most <- merge(data.some, climate.summer, "Year", all=T) # Lets not get rid 
 data.most$Tag <- as.factor(data.most$Tag)
 data.most$Core <- as.factor(data.most$Core)
 
-# Fire Stuff
-
+# Merging fire counts
 data.most <- merge(data.most, fire.count, "Plot", all=TRUE)
 
 data.all <- data.most
@@ -184,9 +202,7 @@ data.all <- data.most
 # data.all$Age <- data.all$Year - data.all$pith.year
 
 # -------------------------------------
-
-# Still need pith year, age, treatment (need fire data)
-
+# Exporting data for analysis
+# -------------------------------------
 
 write.csv(data.all, file.path("data","CombinedData"))
-
