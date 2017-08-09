@@ -44,12 +44,6 @@ rawringfiles <- Sys.glob(file.path(path.google, 'Rollinson_Monitoring/Data/Tree 
 # Setting a path to the raw ring width folder
 tr.path <- file.path(path.google, "Rollinson_Monitoring/Data/Tree Cores/RawRingWidths/")
 
-# Climate data
-climate.month <- read.csv("data/PRISM_provisional_4km_189501_201706_41.8156_-88.0437.csv")
-
-# Fire data
-fire.data <- read.csv(file.path(path.google,"URF_2017_Rollinson/URF2017_BurnInfo.csv"))
-
 # -------------------------------------
 # Data wrangling
 # -------------------------------------
@@ -72,55 +66,6 @@ survey <- rbind(survey1[,c("Plot","Tag","Species", "DBH")], survey2[,c("Plot","T
 rw.names <- dir(tr.path)
 trw.names <- rw.names[grep('ring width', rw.names)]
 trw.names.split <- strsplit(trw.names, "-")
-
-# Fixing column names
-names(climate.month) <- c("Date", "Precip", "Temp")
-
-# Averaging climate data by year
-
-climate.year <- aggregate(climate.month[,c("Precip","Temp")],
-                         list(substr(climate.month$Date,1,4)),
-                         mean)
-
-# Averaging climate data by summer
-
-month.summer <- c("06", "07", "08")
-
-climate.summer <- aggregate(climate.month[substr(climate.month$Date,6,8) %in% month.summer, c("Precip","Temp")],
-                          list(substr(climate.month[substr(climate.month$Date,6,8) %in% month.summer,1],1,4)),
-                          mean)
-
-# Fixing column names
-
-names(climate.year)[1] <- "Year"
-names(climate.summer)[1] <- "Year"
-
-# Fixing fire data
-
-# Removing month and day from date
-fire.data$Burn_Date <- substr(fire.data$Burn_Date, 1, 4)
-
-# Resaving as numeric
-fire.data$Burn_Date <- as.numeric(as.character(fire.data$Burn_Date))
-
-# Fixing the 2013's
-fire.data[fire.data$NOTES == "2013 unsure on date" & !is.na(fire.data$NOTES),"Burn_Date"] <- 2013
-
-# Removing all rows without a burn date
-fire.data <- fire.data[!is.na(fire.data[,"Burn_Date"]),]
-
-# Counting burns per plot
-# Could make burns per decade when they actually span more than one decade
-
-fire.count <- aggregate(fire.data$Burn_Date,
-                             list(fire.data$Corner),
-                             length)
-
-names(fire.count) <- c("Plot", "FireCount")
-
-# Removing the hyphen to allow a merge
-
-fire.count$Plot <- paste0(substr(fire.count$Plot, 1, nchar(paste(fire.count$Plot))-4), substr(fire.count$Plot, nchar(paste(fire.count$Plot))-2,nchar(paste(fire.count$Plot))))
 
 # -------------------------------------
 # Combining data
@@ -177,32 +122,17 @@ for(i in 2:length(trw.names)){
   file.tmp$Core <- paste(aa[c(3, 4, 6)], collapse="-")
   file.tmp$Year <- as.numeric(rownames(file.tmp))
   file.tmp$BAI <- bai.tmp$BAI
-
+  
   # Appending to full file
   rw.long <- rbind(rw.long, file.tmp) 
 }
 
 # Merging the ring width data to the survey data
-data.some <- merge(survey, rw.long, "Tag")
-
-# Merging climate data to master data list
-data.most <- merge(data.some, climate.summer, "Year", all=T) # Lets not get rid of years without climate quite yet
-
-# Saving Tag and Core as factors
-
-data.most$Tag <- as.factor(data.most$Tag)
-data.most$Core <- as.factor(data.most$Core)
-
-# Merging fire counts
-data.most <- merge(data.most, fire.count, "Plot", all=TRUE)
-
-data.all <- data.most
-
-# data.all <- data.most + pith years
-# data.all$Age <- data.all$Year - data.all$pith.year
+data.all <- merge(survey, rw.long, "Tag")
 
 # -------------------------------------
 # Exporting data for analysis
 # -------------------------------------
 
-write.csv(data.all, file.path("data","CombinedData"))
+write.csv(data.all, file.path("data","RingData"))
+
