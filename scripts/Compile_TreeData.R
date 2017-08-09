@@ -205,4 +205,4 @@ data.all <- data.most
 # Exporting data for analysis
 # -------------------------------------
 
-write.csv(data.all, file.path("data","CombinedData"))
+write.csv(data.all, file.path("data","CombinedData.csv"))

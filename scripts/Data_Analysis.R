@@ -28,7 +28,7 @@ setwd(path.wd)
 # Reading in data
 # --------------------------------------
 
-trw.data <- read.csv(file.path(path.wd,"data/CombinedData"))
+trw.data <- read.csv(file.path(path.wd,"data/CombinedData.csv"))
 
 # --------------------------------------
 # Data Wrangling
