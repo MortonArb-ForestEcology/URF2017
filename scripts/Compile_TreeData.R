@@ -42,7 +42,7 @@ survey2 <-read.csv(file.path(path.ew, "URF_2017_AdditionalOakData-raw_data.csv")
 rawringfiles <- Sys.glob(file.path(path.google, 'Rollinson_Monitoring/Data/Tree Cores/RawRingWidths/*.rwl'))
 
 # Setting a path to the raw ring width folder
-tr.path <- file.path(path.google, "Rollinson_Monitoring/Data/Tree Cores/RawRingWidths/")
+tr.path <- file.path(path.google, "URF_2017_Rollinson/RawRingWidths")
 
 # Climate data
 climate.month <- read.csv("data/PRISM_provisional_4km_189501_201706_41.8156_-88.0437.csv")
