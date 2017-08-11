@@ -124,6 +124,7 @@ summary(gamm1QUMA$gam)
 
 # R2 = .812 (184)
 gam1QUMA <- gam(BAI ~ (Precip*Temp + FireCount) + s(Year, by=Tag) + Plot + Tag*Core, data=trw.data[trw.data$Species == "QUMA",])
+anova(gam1QUMA)
 summary(gam1QUMA)
 
 # R2 = .816 . (50)
@@ -237,4 +238,25 @@ ggplot(trw.data[trw.data$Genus == "QU",]) +
   geom_point(aes(x=SinceBurn, y=BAI)) +
   geom_smooth(aes(x=SinceBurn, y=BAI, color = Species), method="lm")
 
+# --------------------------------------
+
+
+
+# --------------------------------------
+# Adding an example of looking at average growth to fit
+# --------------------------------------
+growth.agg <- aggregate(trw.data$BAI,
+                        by=trw.data[,c("Plot", "Tag", "Species", "DBH", "Precip", "Temp", "FireCount")],
+                        FUN=mean)
+names(growth.agg)[ncol(growth.agg)] <- "BAI"
+summary(growth.agg)
+
+growth.lme <- lmer(BAI ~ FireCount*Species - FireCount + (1|Plot), data=growth.agg)
+summary(growth.lme)
+
+# An example with looking at average growth
+lme.qual0 <- lmer(BAI ~  (1|Plot), data=growth.agg[growth.agg$Species=="QUMA",])
+lme.qual1 <- lmer(BAI ~ FireCount + (1|Plot), data=growth.agg[growth.agg$Species=="QUMA",])
+anova(lme.qual0, lme.qual1)
+summary(lme.qual1)
 # --------------------------------------
