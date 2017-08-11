@@ -101,6 +101,7 @@ summary(gamm1QUMA$gam)
 summary(gamm1QUMA$lme)
 
 gamm1QUAL <- gamm(BAI ~ Precip*Temp + FireCount + s(Year, by=Tag), random=list(Plot=~1,Tag=~1, Core=~1), data=trw.data[trw.data$Species == "QUAL",])
+summary(gamm1QUAL$gam)
 
 anova(gamm1QUMA$lme, gamm1QUMA2$lme)
 plot(gam1)
@@ -239,6 +240,11 @@ summary(lm.test2QU)
 # R2 = .0998 ***
 gam2QU <- gam(BAI ~ Precip*Temp + SinceBurn + s(Year, by=Tag), data=trw.data[trw.data$Genus == "QU",])
 summary(gam2QU)
+
+gamm2QU <- gamm(BAI ~ Precip*Temp + SinceBurn + s(Year, by=Tag), random=list(Plot=~1, Tag=~1, Core=~1), data=trw.data[trw.data$Genus == "QU",])
+summary(gamm2QU$lme)
+summary(gamm2QU$gam)
+
 
 ggplot(trw.data[trw.data$Genus == "QU",]) +
   geom_point(aes(x=SinceBurn, y=BAI)) +
