@@ -11,7 +11,7 @@
 
 # Working directory path
 path.wd <- "~/Github/URF2017/" # Sierra
-# path.wd <- "~/Desktop/Research/URF2017_Lopazelles/" # Christy
+# path.wd <- "~/Desktop/Research/URF2017_Lopazalles/" # Christy
 
 # --------------------------------------
 # Load libraries, define working directory
@@ -28,7 +28,7 @@ setwd(path.wd)
 # Reading in data
 # --------------------------------------
 
-trw.data <- read.csv(file.path(path.wd,"data/CombinedData"))
+trw.data <- read.csv(file.path(path.wd,"data/CombinedData.csv"))
 
 # --------------------------------------
 # Data Wrangling
@@ -49,8 +49,8 @@ trw.data.cat$FireCount <- as.factor(trw.data$FireCount)
 # --------------------------------------
 
 # GAMM example (with random effects!); replace Plot, Tree & Core with whatever the appropraite column names are
-
-gamm.example <- gamm(BAI ~ (Precip*Temp + FireCount)*Species + s(Year, by=Plot), random=list(Tag=~1, Core=~1), data=trw.data)
+#
+# gamm.example <- gamm(BAI ~ (Precip*Temp + FireCount)*Species + s(Year, by=Plot), random=list(Tag=~1, Core=~1), data=trw.data)
 
 # Error in MEestimate(lmeSt, grps) : 
 # Singularity in backsolve at level 0, block 1
@@ -73,20 +73,38 @@ lm.test1 <- lm(BAI ~ (Precip*Temp + FireCount)*Species + Year + Plot, data=trw.d
 summary(lm.test1)
 
 # R2 = .318
-gam1 <- gam(BAI ~ (Precip*Temp + FireCount)*Species + s(Year, by=Tag), data=trw.data)
+gam1 <- gam(BAI ~ (Precip*Temp + FireCount)*Species + s(Year, by=Tag) + Tag*Core, data=trw.data)
 summary(gam1)
+anova(gam1)
 plot(gam1)
 
 # Seperating by species
 
 # R2 = .3599 ***
-lm.test1QUMA <- lm(BAI ~ Precip*Temp + FireCount + Year + Plot, data=trw.data[trw.data$Species == "QUMA",])
+lm.test1QUMA <- lm(BAI ~ Precip*Temp + FireCount + as.factor(Year) + Plot, data=trw.data[trw.data$Species == "QUMA",])
 summary(lm.test1QUMA)
+
+library(lme4)
+lmer.test1QUMA <- lmer(BAI ~ Precip*Temp + FireCount + as.factor(Year) + Plot + (1|Core/Tag), data=trw.data[trw.data$Species == "QUMA",])
+lmer.test1QUMA2 <- lmer(BAI ~ Precip*Temp + as.factor(Year) + Plot + (1|Core/Tag), data=trw.data[trw.data$Species == "QUMA",])
+summary(lmer.test1QUMA)
+summary(lmer.test1QUMA2)
+anova(lmer.test1QUMA, lmer.test1QUMA2)
 
 # R2 = .348 ***
 gam1QUMA <- gam(BAI ~ Precip*Temp + FireCount + s(Year, by=Tag), data=trw.data[trw.data$Species == "QUMA",])
 summary(gam1QUMA)
 plot(gam1)
+
+gamm1QUMA <- gamm(BAI ~ Precip*Temp + FireCount + s(Year, by=Tag), random=list(Plot=~1,Tag=~1, Core=~1), data=trw.data[trw.data$Species == "QUMA",])
+summary(gamm1QUMA$gam)
+summary(gamm1QUMA$lme)
+
+gamm1QUAL <- gamm(BAI ~ Precip*Temp + FireCount + s(Year, by=Tag), random=list(Plot=~1,Tag=~1, Core=~1), data=trw.data[trw.data$Species == "QUAL",])
+
+anova(gamm1QUMA$lme, gamm1QUMA2$lme)
+plot(gam1)
+
 
 # --------------------------------------
 # Number of burns in the past 3 years
