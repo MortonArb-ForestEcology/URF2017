@@ -175,5 +175,5 @@ trw.data$Core <- as.factor(trw.data$Core)
 # Data export
 # -------------------------------------
 
-write.csv(trw.data, file.path("data","CombinedData"))
+write.csv(trw.data, file.path("data","CombinedData.csv"))
 
