@@ -19,7 +19,7 @@ path.wd <- "~/Github/URF2017/" # Sierra
 
 # Libraries
 library(lubridate); library(ggplot2)
-library(mgcv)
+library(mgcv); library(lme4)
 
 # Setting a working directory
 setwd(path.wd)
@@ -29,26 +29,19 @@ setwd(path.wd)
 # --------------------------------------
 
 trw.data <- read.csv(file.path(path.wd,"data/CombinedData.csv"))
+trw.late <- read.csv(file.path(path.wd,"data/CombinedData_Late.csv"))
 
 # --------------------------------------
-# Data Wrangling
+# Data wrangling
 # --------------------------------------
 
-# Removing weird first column
-trw.data <- trw.data[,2:length(trw.data)]
-
-# Categorical for boxplots
-
-trw.data.cat <- trw.data
-trw.data.cat$BurnIn3 <- as.factor(trw.data$BurnIn3)
-trw.data.cat$SinceBurn <- as.factor(trw.data$SinceBurn)
-trw.data.cat$FireCount <- as.factor(trw.data$FireCount)
+trw.data <- trw.data[, 2:ncol(trw.data)]
+trw.late <- trw.late[, 2:ncol(trw.late)]
 
 # --------------------------------------
 # Analysis and graphs
 # --------------------------------------
 
-library(lme4)
 lmer.test1QUMA <- lmer(BAI ~ Precip*Temp + FireCount + as.factor(Year) + Plot + (1|Core/Tag), data=trw.data[trw.data$Species == "QUMA",])
 lmer.test1QUMA2 <- lmer(BAI ~ Precip*Temp + as.factor(Year) + Plot + (1|Core/Tag), data=trw.data[trw.data$Species == "QUMA",])
 summary(lmer.test1QUMA)
@@ -63,13 +56,7 @@ ggplot(trw.data) +
   geom_point(aes(x=FireCount, y=BAI, color = Species)) +
   geom_smooth(aes(x=FireCount, y=BAI, color = Species), method="lm")
 
-ggplot() +
-  geom_jitter(aes(x=FireCount, y=BAI, color = Species), alpha=.3, data=trw.data.cat) +
-  geom_boxplot(aes(x=FireCount, y=BAI, color = Species), data=trw.data.cat) 
-  #geom_smooth(aes(x=FireCount, y=BAI), method="lm", data=trw.data)
-
-
-# R2 = .77 ***
+# R2 = .779
 gam1 <- gam(BAI ~ (Precip*Temp + FireCount)*Species + s(Year, by=Tag) + Tag*Core, data=trw.data)
 summary(gam1)
 anova(gam1)
@@ -77,6 +64,10 @@ plot(gam1)
 
 anova(gamm1QUMA$lme, gamm1QUMA2$lme)
 plot(gam1)
+
+# R2 = .69 *** (-666)
+gam1L <- gam(BAI ~ (Precip*Temp + FireCount)*Species + s(Year, by=Tag) + Tag*Core, data=trw.late)
+summary(gam1L)
 
 
 # --------------------------------------
@@ -87,13 +78,17 @@ ggplot(trw.data) +
   geom_point(aes(x=BurnIn3, y=BAI, color=Species)) +
   geom_smooth(aes(x=BurnIn3, y=BAI, color = Species), method="lm")
 
-# R2 = .771
+# R2 = .78
 gam3 <- gam(BAI ~ (Precip*Temp + BurnIn3)*Species + s(Year, by=Tag) + Plot + Tag*Core, data=trw.data)
 summary(gam3)
 
+# R2 = .691 . (-160)
+gam3L <- gam(BAI ~ (Precip*Temp + BurnIn3)*Species + s(Year, by=Tag) + Plot + Tag*Core, data=trw.late)
+summary(gam3L)
+
 # Seperating by species
 
-# R2 = .812
+# R2 = .826
 gam3QUMA <- gam(BAI ~ (Precip*Temp + BurnIn3) + s(Year, by=Tag) + Plot + Tag*Core, data=trw.data[trw.data$Species == "QUMA",])
 summary(gam3QUMA)
 
@@ -109,31 +104,58 @@ ggplot(trw.data) +
   geom_jitter(aes(x=SinceBurn, y=BAI, color=Species)) +
   geom_smooth(aes(x=SinceBurn, y=BAI, color=Species), method="lm")
 
-# R2 = .773
+ggplot(trw.late) +
+  geom_jitter(aes(x=SinceBurn, y=BAI, color=Species)) +
+  geom_smooth(aes(x=SinceBurn, y=BAI, color=Species), method="lm")
+
+# R2 = .78
 gam2 <- gam(BAI ~ (Precip*Temp + SinceBurn)*Species + s(Year, by=Tag) + Plot + Tag*Core, data=trw.data)
 summary(gam2)
+
+# R2 = .694 ** (53)
+gam2L <- gam(BAI ~ (Precip*Temp + SinceBurn)*Species + s(Year, by=Tag) + Plot + Tag*Core, data=trw.late)
+summary(gam2L)
 
 # --------------------------------------
 # Seperating by species
 
 # QUMA ---------------------------------
 
-# R2 = .35 . (-437)
+# R2 = .35 . (-485)
 gamm1QUMA <- gamm(BAI ~ Precip*Temp + FireCount + s(Year, by=Tag), random=list(Plot=~1,Tag=~1, Core=~1), data=trw.data[trw.data$Species == "QUMA",])
 summary(gamm1QUMA$gam)
 
-# R2 = .812 (184)
+# R2 = .827 ** (-215)
 gam1QUMA <- gam(BAI ~ (Precip*Temp + FireCount) + s(Year, by=Tag) + Plot + Tag*Core, data=trw.data[trw.data$Species == "QUMA",])
 anova(gam1QUMA)
 summary(gam1QUMA)
 
-# R2 = .816 . (50)
+# R2 = .827  (19)
 gam2QUMA <- gam(BAI ~ (Precip*Temp + SinceBurn) + s(Year, by=Tag) + Plot + Tag*Core, data=trw.data[trw.data$Species == "QUMA",])
 summary(gam2QUMA)
 
-# R2 = .0793 . (50)
+# R2 = .0269  (19)
 gamm2QUMA <- gamm(BAI ~ Precip*Temp + SinceBurn + s(Year, by=Tag), random=list(Plot=~1, Tag=~1, Core=~1), data=trw.data[trw.data$Species == "QUMA",])
 summary(gamm2QUMA$gam)
+
+# --- Latewood ---
+ 
+# R2 = .237 (-274)
+gamm1LQUMA <- gamm(BAI ~ Precip*Temp + FireCount + s(Year, by=Tag), random=list(Plot=~1,Tag=~1, Core=~1), data=trw.late[trw.late$Species == "QUMA",])
+summary(gamm1LQUMA$gam)
+
+# R2 = .706 ** (-200)
+gam1LQUMA <- gam(BAI ~ (Precip*Temp + FireCount) + s(Year, by=Tag) + Plot + Tag*Core, data=trw.late[trw.late$Species == "QUMA",])
+anova(gam1LQUMA)
+summary(gam1LQUMA)
+
+# R2 = .704  (0)
+gam2LQUMA <- gam(BAI ~ (Precip*Temp + SinceBurn) + s(Year, by=Tag) + Plot + Tag*Core, data=trw.late[trw.late$Species == "QUMA",])
+summary(gam2LQUMA)
+
+# R2 = .00988  (5)
+gamm2LQUMA <- gamm(BAI ~ Precip*Temp + SinceBurn + s(Year, by=Tag), random=list(Plot=~1, Tag=~1, Core=~1), data=trw.late[trw.late$Species == "QUMA",])
+summary(gamm2LQUMA$gam)
 
 ggplot(trw.data[trw.data$Species == "QUMA",]) +
   geom_point(aes(x=SinceBurn, y=BAI, color = Plot)) +
@@ -141,40 +163,40 @@ ggplot(trw.data[trw.data$Species == "QUMA",]) +
 
 # QUAL ---------------------------------
 
-# R2 = .774 *** (5048)
+# R2 = .784 *** (-281)
 gam1QUAL <- gam(BAI ~ (Precip*Temp + FireCount) + s(Year, by=Tag) + Plot + Tag*Core, data=trw.data[trw.data$Species == "QUAL",])
 summary(gam1QUAL)
 
-# R2 = .397 (109)
+# R2 = .406 (147)
 gamm1QUAL <- gamm(BAI ~ Precip*Temp + FireCount + s(Year, by=Tag), random=list(Plot=~1,Tag=~1, Core=~1), data=trw.data[trw.data$Species == "QUAL",])
 summary(gamm1QUAL$gam)
 
-# R2 = .781 *** (59)
+# R2 = .788 * (44)
 gam2QUAL <- gam(BAI ~ (Precip*Temp + SinceBurn) + s(Year, by=Tag) + Plot + Tag*Core, data=trw.data[trw.data$Species == "QUAL",])
 summary(gam2QUAL)
 
-# R2 = .364 ** (52)
+# R2 = .365 (21)
 gamm2QUAL <- gamm(BAI ~ Precip*Temp + SinceBurn + s(Year, by=Tag), random=list(Plot=~1, Tag=~1, Core=~1), data=trw.data[trw.data$Species == "QUAL",])
 summary(gamm2QUAL$gam)
 
-ggplot(trw.data.cat[trw.data$Species == "QUAL",]) +
-  geom_boxplot(aes(x=SinceBurn, y=BAI, color = Species)) 
+ggplot(trw.data[trw.data$Species == "QUMA",]) +
+  geom_boxplot(aes(x=SinceBurn, y=BAI, group = SinceBurn)) 
 
 # QURU ---------------------------------
 
-# R2 = .797 (-1)
+# R2 = .803 (0)
 gam1QURU <- gam(BAI ~ (Precip*Temp + FireCount) + s(Year, by=Tag) + Plot + Tag*Core, data=trw.data[trw.data$Species == "QURU",])
 summary(gam1QURU)
 
-# R2 = .0596 (-137)
+# R2 = .0624 (-162)
 gamm1QURU <- gamm(BAI ~ Precip*Temp + FireCount + s(Year, by=Tag), random=list(Plot=~1,Tag=~1, Core=~1), data=trw.data[trw.data$Species == "QURU",])
 summary(gamm1QURU$gam)
 
-# R2 = .797 (55)
+# R2 = .805 (71)
 gam2QURU <- gam(BAI ~ (Precip*Temp + SinceBurn) + s(Year, by=Tag) + Plot + Tag*Core, data=trw.data[trw.data$Species == "QURU",])
 summary(gam2QURU)
 
-# R2 = .0426 (60)
+# R2 = .0505 * (82)
 gamm2QURU <- gamm(BAI ~ Precip*Temp + SinceBurn + s(Year, by=Tag), random=list(Plot=~1, Tag=~1, Core=~1), data=trw.data[trw.data$Species == "QURU",])
 summary(gamm2QURU$gam)
 
@@ -184,19 +206,19 @@ ggplot(trw.data[trw.data$Species == "QURU",]) +
 
 # ACSA ---------------------------------
 
-# R2 = .545 (915)
+# R2 = .556 * (-2)
 gam1ACSA <- gam(BAI ~ (Precip*Temp + FireCount) + s(Year, by=Tag) + Plot + Tag*Core, data=trw.data[trw.data$Species == "ACSA",])
 summary(gam1ACSA)
 
-# R2 = .0922 (-56)
+# R2 = .0811 (-31)
 gamm1ACSA <- gamm(BAI ~ Precip*Temp + FireCount + s(Year, by=Tag), random=list(Plot=~1,Tag=~1, Core=~1), data=trw.data[trw.data$Species == "ACSA",])
 summary(gamm1ACSA$gam)
 
-# R2 = .544 (7)
+# R2 = .556 (5)
 gam2ACSA <- gam(BAI ~ (Precip*Temp + SinceBurn) + s(Year, by=Tag) + Plot + Tag*Core, data=trw.data[trw.data$Species == "ACSA",])
 summary(gam2ACSA)
  
-# R2 = .0865 (8)
+# R2 = .08 (7)
 gamm2ACSA <- gamm(BAI ~ Precip*Temp + SinceBurn + s(Year, by=Tag), random=list(Plot=~1, Tag=~1, Core=~1), data=trw.data[trw.data$Species == "ACSA",])
 summary(gamm2ACSA$gam)
 
@@ -206,19 +228,19 @@ ggplot(trw.data[trw.data$Species == "ACSA",]) +
 
 # TIAM ---------------------------------
 
-# R2 = .623 (-52)
+# R2 = .622 (-3)
 gam1TIAM <- gam(BAI ~ (Precip*Temp + FireCount) + s(Year, by=Tag) + Plot + Tag*Core, data=trw.data[trw.data$Species == "TIAM",])
 summary(gam1TIAM)
 
-# R2 = .467 (-23)
+# R2 = .468 (-27)
 gamm1TIAM <- gamm(BAI ~ Precip*Temp + FireCount + s(Year, by=Tag), random=list(Plot=~1,Tag=~1, Core=~1), data=trw.data[trw.data$Species == "TIAM",])
 summary(gamm1TIAM$gam)
 
-# R2 = .622 (1)
+# R2 = .621 (-4)
 gam2TIAM <- gam(BAI ~ (Precip*Temp + SinceBurn) + s(Year, by=Tag) + Plot + Tag*Core, data=trw.data[trw.data$Species == "TIAM",])
 summary(gam2TIAM)
 
-# R2 = .469 (7)
+# R2 = .469 (3)
 gamm2TIAM <- gamm(BAI ~ Precip*Temp + SinceBurn + s(Year, by=Tag), random=list(Plot=~1, Tag=~1, Core=~1), data=trw.data[trw.data$Species == "TIAM",])
 summary(gamm2TIAM$gam)
 
@@ -230,7 +252,7 @@ ggplot(trw.data[trw.data$Species == "TIAM",]) +
 
 # Oaks ---------------------------------
 
-gamm2QU <- gamm(BAI ~ Precip*Temp + SinceBurn + s(Year, by=Tag), random=list(Plot=~1, Tag=~1, Core=~1), data=trw.data[trw.data$Genus == "QU",])
+gamm2QU <- gamm(BAI ~ (Precip*Temp + FireCount)*Species + s(Year, by=Tag), random=list(Plot=~1, Tag=~1, Core=~1), data=trw.data[trw.data$Genus == "QU",])
 summary(gamm2QU$lme)
 summary(gamm2QU$gam)
 
@@ -246,7 +268,7 @@ ggplot(trw.data[trw.data$Genus == "QU",]) +
 # Adding an example of looking at average growth to fit
 # --------------------------------------
 growth.agg <- aggregate(trw.data$BAI,
-                        by=trw.data[,c("Plot", "Tag", "Species", "DBH", "Precip", "Temp", "FireCount")],
+                        by=trw.data[,c("Plot", "Tag", "Species", "DBH", "FireCount")],
                         FUN=mean)
 names(growth.agg)[ncol(growth.agg)] <- "BAI"
 summary(growth.agg)
@@ -259,4 +281,31 @@ lme.qual0 <- lmer(BAI ~  (1|Plot), data=growth.agg[growth.agg$Species=="QUMA",])
 lme.qual1 <- lmer(BAI ~ FireCount + (1|Plot), data=growth.agg[growth.agg$Species=="QUMA",])
 anova(lme.qual0, lme.qual1)
 summary(lme.qual1)
+
+ggplot(growth.agg) +
+  geom_jitter(aes(x=DBH, y=BAI), width = .1) +
+  geom_smooth(aes(x=DBH, y=BAI), method="lm")
+
+ggplot(growth.agg) +
+  geom_jitter(aes(x=log(DBH), y=BAI), width = .1) +
+  geom_smooth(aes(x=log(DBH), y=BAI), method="lm")
+  
 # --------------------------------------
+
+
+?sea
+
+growth.mean <- aggregate(trw.data[trw.data$Genus == "QU" & trw.data$FireCount == 6, "BAI"],
+                        list(trw.data[trw.data$Genus == "QU" & trw.data$FireCount == 6, "Year"]),
+                        FUN=mean)
+names(growth.mean) <- c("Year", "BAI")
+
+growth.mean <- growth.mean$BAI
+
+growth.mean <- data.frame(growth.mean)
+
+rownames(growth.mean) <- seq(2000, 2016)
+
+event.years <- c(2006, 2007, 2012, 2013, 2015)
+
+trw.sea <- sea(growth.mean, event.years, lag = 5, resample = 1000)

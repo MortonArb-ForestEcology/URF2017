@@ -9,6 +9,10 @@
 # CHECK BEFORE RUNNING!
 # --------------------------------------
 
+# Name of ring width file
+file.path <- "RingData_Latewood"
+# file.path <- "RingData"
+
 # Working directory path
 path.wd <- "~/Github/URF2017/" # Sierra
 # path.wd <- "~/Desktop/Research/URF2017_Lopazalles/" # Christy
@@ -34,7 +38,7 @@ setwd(path.wd)
 # --------------------------------------
 
 # Tree ring data
-trw.data <- read.csv(file.path(path.wd,"data/RingData"))
+trw.data <- read.csv(file.path(path.wd,"data", file.path))
 
 # Climate data
 climate.month <- read.csv("data/PRISM_provisional_4km_189501_201706_41.8156_-88.0437.csv")
@@ -46,8 +50,7 @@ fire.data <- read.csv(file.path(path.google,"URF_2017_Rollinson/URF2017_BurnInfo
 # Data wrangling
 # -------------------------------------
 
-# Removing weird first column
-trw.data <- trw.data[,2:length(trw.data)]
+trw.data <- trw.data[,2:ncol(trw.data)]
 
 trw.data$Genus <- substr(trw.data$Species, 1, 2)
 
@@ -87,6 +90,9 @@ fire.data[fire.data$NOTES == "2013 unsure on date" & !is.na(fire.data$NOTES),"Bu
 # Removing all rows without a burn date
 fire.data <- fire.data[!is.na(fire.data[,"Burn_Date"]),]
 
+# Removing 2017 since only partial year
+fire.data <- fire.data[fire.data$Burn_Date != "2017",]
+
 # Fixing column name
 
 names(fire.data)[9] <- "Plot"
@@ -98,9 +104,9 @@ fire.data$Plot <- paste0(substr(fire.data$Plot, 1, nchar(paste(fire.data$Plot))-
 # Merging climate data
 trw.data <- merge(trw.data, climate.summer, "Year", all=T) 
 
-# Only looking at the tree ring data from 2000 to present 
+# Only looking at the tree ring data from 2000 to 2016
 trw.data <- trw.data[trw.data$Year >= 2000,]
-
+trw.data <- trw.data[trw.data$Year <= 2016,]
 
 # -------------------------------------
 # Fire Analysis
@@ -175,5 +181,5 @@ trw.data$Core <- as.factor(trw.data$Core)
 # Data export
 # -------------------------------------
 
-write.csv(trw.data, file.path("data","CombinedData.csv"))
+write.csv(trw.data, file.path("data","CombinedData_Late.csv"))
 

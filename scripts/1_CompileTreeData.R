@@ -9,6 +9,14 @@
 # CHECK BEFORE RUNNING!
 # --------------------------------------
 
+# Setting which part of the ring data to use
+ringwidth.part <- "latewood width"
+#ringwidth.part <- "ring width"
+
+# Setting name of the file to be exported
+#file.name <- "RingData"
+file.name <- "RingData_Latewood"
+
 # Working directory path
 path.wd <- "~/Github/URF2017/" # Sierra
 # path.wd <- "~/Desktop/Research/URF2017_Lopazalles/" # Christy
@@ -64,7 +72,7 @@ survey <- rbind(survey1[,c("Plot","Tag","Species", "DBH")], survey2[,c("Plot","T
 # Splitting the raw ring file name into lists
 
 rw.names <- dir(tr.path)
-trw.names <- rw.names[grep('ring width', rw.names)]
+trw.names <- rw.names[grep(ringwidth.part, rw.names)]
 trw.names.split <- strsplit(trw.names, "-")
 
 # -------------------------------------
@@ -134,4 +142,4 @@ data.all <- merge(survey, rw.long, "Tag")
 # Exporting data for analysis
 # -------------------------------------
 
-write.csv(data.all, file.path("data","CombinedData.csv"))
+write.csv(data.all, file.path("data",file.name))
