@@ -13,6 +13,14 @@
 path.wd <- "~/Github/URF2017/" # Sierra
 # path.wd <- "~/Desktop/Research/URF2017_Lopazalles/" # Christy
 
+# Path to Tree Census 2017 Github folder
+path.ew <- "~/GitHub/EastWoods-MonitoringPlots/TreeCensus_2017/" # Sierra
+
+# Path to East Woods Google Drive folder
+path.google <- "C:/Users/macmo/Google Drive/Morton Summer 2017/East Woods/" # Sierra
+# path.google <- "~/Google Drive/East Woods" # Christy
+
+
 # --------------------------------------
 # Load libraries, define working directory
 # --------------------------------------
@@ -28,7 +36,17 @@ setwd(path.wd)
 # Reading in data
 # --------------------------------------
 
+# 2017 permanent plot survey data
+
+survey1.perm <-read.csv(file.path(path.ew,"data/TreeData-raw_data.csv"), na.strings="")
+
+heights.perm <- read.csv(file.path(path.ew,"data/TreeHeights-raw_data.csv"), na.strings="")
+
+survey.temp <-read.csv(file.path(path.ew, "data/URF_2017_AdditionalOakData-raw_data.csv"), na.strings="", colClasses=c("Tag"="character"))
+
 trw.data <- read.csv(file.path(path.wd,"data/CombinedData.csv"))
+
+fire.data <- read.csv(file.path(path.google,"URF_2017_Rollinson/URF2017_BurnInfo.csv"))
 
 # --------------------------------------
 # Data Wrangling
@@ -51,6 +69,100 @@ trw.tag <- aggregate(trw.data[,c("BAI", "RingWidth")],
 growth.agg <- aggregate(trw.data[,c("BAI", "RingWidth")],
                         by=trw.data[,c("Plot", "Tag", "Species", "DBH", "FireCount", "Genus")],
                         mean)
+
+# Survey data
+
+survey1.perm$Sp_code <- as.factor(substr(survey1.perm$Sp_code, 1, 4))
+
+survey.perm <- merge(survey1.perm, heights.perm[c("Tag","Height")], by = "Tag")
+
+survey.perm$Plot <- recode(survey.perm$Plot, " 'A1'='N115'; 'B5'='U134'; 'C6'='HH115'; 'D1'='B127' ")
+
+names(survey.perm)[6] <- "Species"
+
+survey.perm[,"Tag"] <- as.character(survey.perm[,"Tag"])
+survey.temp[,"Tag"] <- as.character(survey.temp[,"Tag"])
+
+survey <- rbind(survey.perm[,c("Plot","Tag","Species", "DBH", "Height", "Canopy")], survey.temp[,c("Plot","Tag","Species", "DBH", "Height", "Canopy")])                     
+
+# Fire data
+
+# Removing month and day from date
+fire.data$Burn_Date <- substr(fire.data$Burn_Date, 1, 4)
+
+# Resaving as numeric
+fire.data$Burn_Date <- as.numeric(as.character(fire.data$Burn_Date))
+
+# Fixing the 2013's
+fire.data[fire.data$NOTES == "2013 unsure on date" & !is.na(fire.data$NOTES),"Burn_Date"] <- 2013
+
+# Removing all rows without a burn date
+fire.data <- fire.data[!is.na(fire.data[,"Burn_Date"]),]
+
+# Removing 2017 since only partial year
+fire.data <- fire.data[fire.data$Burn_Date != "2017",]
+
+# Fixing column name
+
+names(fire.data)[9] <- "Plot"
+
+# Removing the hyphen to allow a merge
+
+fire.data$Plot <- paste0(substr(fire.data$Plot, 1, nchar(paste(fire.data$Plot))-4), substr(fire.data$Plot, nchar(paste(fire.data$Plot))-2,nchar(paste(fire.data$Plot))))
+
+fire.count <- aggregate(fire.data$Burn_Date,
+                        list(fire.data$Plot),
+                        length)
+
+names(fire.count) <- c("Plot", "FireCount")
+
+# Merging fire counts
+survey <- merge(survey, fire.count, "Plot", all=TRUE)
+
+# Setting all NA fire counts to zero
+survey[is.na(survey$FireCount),"FireCount"] <- 0
+
+# Setting levels
+
+survey$Canopy <- factor(survey$Canopy, levels=c("D", "CD", "I", "U", NA))
+
+survey$Species <- factor(survey$Species, 
+                         levels=c("ACSA", "FRAM", "JUNI", "OSVI", "QURU", "QUAL", "QUMA", "PRSE", "TIAM", "ULRU", "UNKN", "unkn", NA))
+
+# --------------------------------------
+# Figures
+# --------------------------------------
+
+# Canopy Distributions based on plot
+
+ggplot(survey) +
+  geom_bar(aes(Canopy, fill=Species)) +
+  facet_wrap(~ Plot)
+
+# Canopy Distributions based on regime
+
+ggplot(survey) +
+  geom_bar(aes(Canopy, fill = Species)) +
+  facet_wrap(~ FireCount)
+
+# Species distribution based on plot
+
+ggplot(survey) +
+  geom_bar(aes(Species, fill=Species)) +
+  facet_wrap(~ Plot)
+
+ggplot(survey) +
+  geom_bar(aes(Plot, fill=Species))
+
+# Species distribution based on regime
+
+ggplot(survey) +
+  geom_bar(aes(Species, fill=Species)) +
+  facet_wrap(~ FireCount)
+
+# --------------------------------------
+# Morton Symposium Presentation Figures
+# --------------------------------------
 
 # Distribution of data -----------------
 
@@ -136,13 +248,16 @@ ggplot(growth.agg[growth.agg$Species == "T. americana",]) +
 
 # Since Burn ---------------------------
 
+fire.date <- data.frame(c(2012, 2017))
+
 ggplot(trw.tag[trw.tag$Tag == "1427",]) +
   geom_line(aes(x=Year, y=BAI, color = Tag, size = 2)) +
   geom_point(aes(x=Year, y=BAI, color = Tag, size = 3)) +
   labs(x="Year", y = expression("Growth (mm"^2*")")) +
   theme(legend.position="none")  +
   theme(axis.text=element_text(size=20),
-        axis.title=element_text(size=25,face="bold"))
+        axis.title=element_text(size=25,face="bold"))+
+  geom_vline(xintercept = c(2012, 2017), aes(color = ))
 
 ggplot(trw.tag[trw.tag$Tag ==  "1427",]) +
   geom_jitter(aes(x=SinceBurn, y=BAI), width = .1, size = 4) +
