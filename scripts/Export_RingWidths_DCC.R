@@ -10,10 +10,10 @@
 # --------------------------------------
 
 # Export info
-file.name <- "master_trw.rwl"
+file.name <- "master2_trw.rwl"
 
 # Path to tree ring files
-tr.path <- "~/Google Drive/Morton Summer 2017/East Woods/Rollinson_Monitoring/Data/Tree Cores/RawRingWidths" #Sierra
+tr.path <- "C:/Users/macmo/Google Drive/Morton Summer 2017/East Woods/URF_2017_Rollinson/RawRingWidths" #Sierra
 # tr.path <- "~/Google Drive/East Woods/Rollinson_Monitoring/Data/Tree Cores/RawRingWidths" #Christy
 
 # Working directory path
@@ -84,4 +84,5 @@ for(i in 2:length(trw.names)){
 }
 
 # Exporting tree ring widths as one combined file
-write.rwl(files.all, file.path("data",file.name), long.names=TRUE)
+write.rwl(files.all, file.path("crossdating",file.name), long.names=TRUE)
+
